@@ -3,10 +3,13 @@
 Sound Level Meter connected to Raspberry Pi
 
 to start server:
+
 	cd mosquitto-1.6.3
+
 	mosquitto -c mosquitto.conf -v
 
 to subscribe to topic & subtopics: 
+
 	mosquitto_sub -h localhost -t sensor1/#
 
 to kill mosquitto (if running as daemon):
