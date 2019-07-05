@@ -2,6 +2,18 @@
 
 Sound Level Meter connected to Raspberry Pi
 
+# Installation
+
+Download this using
+
+	git clone https://github.com/azt501/RPiZeroSLM
+
+cd into the folder RPiZeroSLM and type
+
+	bash ./install.sh
+
+#Useful Information
+
 to start server:
 
 	cd mosquitto-1.6.3
