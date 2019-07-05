@@ -1,4 +1,4 @@
-#RPiZeroSLM
+# RPiZeroSLM
 
 Sound Level Meter connected to Raspberry Pi
 
