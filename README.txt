@@ -1,3 +1,7 @@
+#RPiZeroSLM
+
+Sound Level Meter connected to Raspberry Pi
+
 use "mosquitto -c mosquitto.conf -v" in mosquitto directory to start server.
 use "mosquitto_sub -h localhost -t sensor1/#" in mosquitto directory to subscribe to the topic "sensor1" and all subtopics
 
