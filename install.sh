@@ -1,5 +1,5 @@
 # Install the Raspbian Minimal Image
-sudo apt-get update --fix-missing
+sudo apt-get --allow-releaseinfo-change update --fix-missing
 sudo apt-get upgrade
 sudo apt-get install tmux vim git
 sudo apt-get install i2c-tools build-essential
