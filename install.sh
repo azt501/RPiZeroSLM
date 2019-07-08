@@ -1,9 +1,10 @@
 # Install the Raspbian Minimal Image
 sudo apt-get update --fix-missing
+sudo apt-get upgrade
 sudo apt-get install tmux vim git
 sudo apt-get install i2c-tools build-essential
 # python2 libraries
-sudo apt-get install python-dev python-pyaudio python-numpy python-scipy python-smbus python-pip python-blinkt libc-ares-dev libwebsockets-dev libssl-dev xsltproc docbook-xsl
+sudo apt-get install python-dev python-pyaudio python-numpy python-scipy python-smbus python-pip python-blinkt libc-ares-dev libwebsockets-dev libssl-dev xsltproc docbook-xsl python-blinkt
 sudo pip install paho-mqtt
 # install mosquitto
 wget https://mosquitto.org/files/source/mosquitto-1.6.3.tar.gz
