@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import datetime
 import socket
 import os, errno
 import paho.mqtt.client as mqtt
@@ -22,7 +23,7 @@ FORMAT = pyaudio.paInt16    # 16 bit
 CHANNEL = 1
 dev_index = 1
 
-FS = 48000
+FS = 44000
 
 #Setup client mqtt
 
@@ -68,28 +69,12 @@ def unCalibrateMic():
     global dBAOffset, dBCOffset
     dBAOffset, dBCOffset = 0,0
 
-
 def _format_db_string(value, units="dB"):
     return "{:.2f} {:s}".format(value, units)
-
-def write_file(content, filename, dirname):
-    path = os.path.join(dirname, filename)
-    with open(path, 'w') as f:
-        f.write( content )
-    return path
-
-
-def _filter(data, NUMERATOR, DENOMINATOR, unit="dBA"):
-    y = lfilter(NUMERATOR, DENOMINATOR, data)
-    rms = 20*numpy.log10(spl.rms_flat(y))
-    t = _format_db_string(rms, unit)
-    return t,rms
-
 
 def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
     global prevdBA, prevdBC
     print("Listening")
-    counterdBTest = 0
     counter = 0
     suma = 0
     sumc = 0
@@ -115,6 +100,7 @@ def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
                 cvalue = cfiltered[i]
                 suma += avalue*avalue # sum squared
                 sumc += cvalue*cvalue
+
                 counter += 1 # count the number of samples for the average
                 if counter >= FS: #FS samples = 1s of data
                     msa = suma/float(FS) # mean squared
@@ -132,16 +118,12 @@ def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
 
 		    prevdBA = float(texta)
 		    prevdBC =float(textc)
-
+		    print(datetime.datetime.now())
                     print("a: " + editeda )
                     print("c: " + editedc )
                     print("c-a: " + str(float(editeda)-float(editedc) ))
                     print("")
                     counter, suma, sumc = 0,0,0
-		    counterdBTest += 1
-	
-#	if counterdBTest == 3:
-#		calibrateMic()
 
     stream.stop_stream()
     stream.close()
