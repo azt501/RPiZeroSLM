@@ -26,8 +26,6 @@ to subscribe to topic & subtopics:
 
 to kill mosquitto (if running as daemon):
 
-	ps -aux | grep mosquitto
-
 	pgrep mosquitto
 
 	kill -9 PID (that you get from above command)
