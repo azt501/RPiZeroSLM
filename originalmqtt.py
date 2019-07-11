@@ -4,7 +4,6 @@ import pyaudio
 import spl_lib as spl
 from scipy.signal import lfilter
 import numpy
-import paho.mqtt.client as mqtt
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,21 +19,7 @@ C_NUMERATOR, C_DENOMINATOR = spl.C_weighting(FS)
 
 def get_path(base, tail, head=''):
     return os.path.join(base, tail) if head == '' else get_path(head, get_path(base, tail)[1:])
-def on_message(client, userdata, message):
-	msg = str(message.payload.decode("utf-8"))
-	if "rasp" not in msg: print("message received " ,msg)
-	if msg == "calibrate":
-		calibrateMic()
-	elif msg == "nocalibrate":
-		unCalibrateMic()
 
-client = mqtt.Client("MicZTest") #,transport='websockets')
-client.connect("172.16.21.105") # ,9001)
-directory = "sensor1"
-client.on_message = on_message
-client.subscribe("sensor1")
-hostname = socket.gethostname()
-print(hostname)
 
 '''
 Listen to mic
@@ -46,18 +31,6 @@ stream = pa.open(format = FORMAT,
                 rate = FS,
                 input = True,
                 frames_per_buffer = CHUNK)
-
-prevdB = 0
-dBOffset = 0
-
-def calibrateMic(decibel = 94):
-    global dBOffset
-    dBOffset = prevdB - decibel
-
-def unCalibrateMic():
-    global dBOffset
-    dBAOffset = 0
-
 
 def _format_db_string(value, units="dB"):
     return "{:.2f} {:s}".format(value, units)
@@ -78,13 +51,10 @@ def _filter(data, NUMERATOR, DENOMINATOR, unit="dBA"):
 
 
 def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
-    global prevdB
     print("Listening")
     counter = 0
     sum2 = 0
     rms = 0
-    edited = 0
-    client.loop_start()
     while True:
         try:
             ## read() returns string. You need to decode it into an array later.
@@ -106,10 +76,7 @@ def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
                     ms = sum2/float(FS) # mean squared
                     rms = numpy.sqrt(ms) # root mean squared
                     text = "{:.2f}".format( 20*numpy.log10(rms) )
-                    prevdB = float(text)
-                    edited = str(float(text)-float(dBOffset))
-                    client.publish(directory,hostname+"&"+edited)
-                    print("a: " edited )
+                    # print( text )
                     write_file(text, "value.txt", "/var/tmp/" )
                     counter, sum2 = 0,0
 
