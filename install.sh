@@ -7,7 +7,6 @@ sudo apt-get install mosquitto mosquitto-clients
 # python2 libraries
 sudo apt-get install python-dev python-pyaudio python-numpy python-scipy python-smbus python-pip python-blinkt libc-ares-dev libwebsockets-dev libssl-dev xsltproc docbook-xsl python-blinkt
 sudo pip install paho-mqtt
-sudo pip install spl
 # install mosquitto
 wget https://mosquitto.org/files/source/mosquitto-1.6.3.tar.gz
 tar -xzvf mosquitto-1.6.3.tar.gz
