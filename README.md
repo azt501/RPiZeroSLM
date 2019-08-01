@@ -14,7 +14,7 @@ cd into the folder RPiZeroSLM and run installation
 
 	cd RPiZeroSLM
 
-	sudo bash ./install.sh
+	sudo bash ./install.sh -y
 
 # Useful Information
 
