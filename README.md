@@ -10,9 +10,11 @@ Download this using
 
 	git clone https://github.com/azt501/RPiZeroSLM
 
-cd into the folder RPiZeroSLM and type
+cd into the folder RPiZeroSLM and run installation
 
-	bash ./install.sh
+	cd RPiZeroSLM
+
+	sudo bash ./install.sh
 
 #Useful Information
 
