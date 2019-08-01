@@ -6,7 +6,7 @@ Sound Level Meter connected to Raspberry Pi
 
 Download this using
 
-        sudo apt-get install git
+	sudo apt-get install git
 
 	git clone https://github.com/azt501/RPiZeroSLM
 
