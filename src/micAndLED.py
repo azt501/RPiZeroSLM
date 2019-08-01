@@ -1,8 +1,6 @@
-#!/usr/bin/env python
 import os, errno
 import math
 import time
-import datetime
 import pyaudio
 import spl_lib as spl
 from scipy.signal import lfilter
@@ -10,27 +8,12 @@ import numpy
 import paho.mqtt.client as mqtt
 from blinkt import set_pixel, show
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-CHUNK = 2**13 #8192
-FORMAT = pyaudio.paInt16    # 16 bit
-CHANNEL = 1
-
-FS = 48000
-
-# Create the filter coeffs
-A_NUMERATOR, A_DENOMINATOR = spl.A_weighting(FS)
-
-def get_path(base, tail, head=''):
-    return os.path.join(base, tail) if head == '' else get_path(head, get_path(base, tail)[1:])
-
 '''
 setup leds
 '''
 R = [0,0,65,105,180,255,255,255]
 G = [255,230,150,100,50,0,0,0]
 olddB = 0
-#currentdB = 0
 
 def updateLEDs(dB):
 	global olddB
@@ -73,13 +56,6 @@ client.subscribe("sensor1")
 '''
 Listen to mic
 '''
-pa = pyaudio.PyAudio()
-
-stream = pa.open(format = FORMAT,
-                channels = CHANNEL,
-                rate = FS,
-                input = True,
-                frames_per_buffer = CHUNK)
 
 prevdB = 0
 dBOffset = 0
@@ -92,20 +68,23 @@ def unCalibrateMic():
     global dBOffset
     dBOffset = 0
 
-def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
-    global prevdB #, currentdB
+def listen(FORMAT = pyaudio.paInt16, CHUNK = 2**13, FS = 48000, CHANNEL = 1):
+    succeeded = 1
+    A_NUMERATOR, A_DENOMINATOR = spl.A_weighting(FS)
+    pa = pyaudio.PyAudio()
+    stream = pa.open(format = FORMAT, channels = CHANNEL, rate = FS, input = True, frames_per_buffer = CHUNK)
+    global prevdB
     print("Listening")
     counter = 0
     sum2 = 0
     rms = 0
-    edited = 0
     client.loop_start()
     while True:
         try:
             block = stream.read(CHUNK)
         except IOError as e:
-            error_count += 1
-            print(" (%d) Error recording: %s" % (error_count, e))
+	    succeeded = 0
+	    break
         else:
             decoded_block = numpy.fromstring(block, 'Int16') # use numpy to decode the data
             filtered = lfilter(A_NUMERATOR, A_DENOMINATOR, decoded_block) # a-weighted
@@ -117,22 +96,25 @@ def listen(old=0, error_count=0, min_decibel=100, max_decibel=0):
                     rms = numpy.sqrt(ms) # root mean squared
 		    prevdB = float("{:.2f}".format( 20*numpy.log10(rms) ))
                     text = float(prevdB) - float(dBOffset)
-#		    try:
-#			for i in range (int(olddB), int(text), int((text-olddB)/2)):
-		    updateLEDs(text)
-#		    except:
-#			1+1
+		    try:
+		     	    for i in range (int(olddB), int(text), int((text-olddB)/3)):
+			        updateLEDs(i)
+		    except:
+			1+1
 		    print(text)
                     client.publish(directory,text)
-#		    time.sleep(.05)
                     counter, sum2 = 0,0
 
-
-    stream.stop_stream()
-    stream.close()
+    print("stopping")
+    if succeeded:
+	    stream.stop_stream()
+	    stream.close()
     pa.terminate()
 
 
 
 if __name__ == '__main__':
-    listen()
+    while True:
+        listen()
+	time.sleep(.5)
+
