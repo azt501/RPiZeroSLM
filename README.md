@@ -16,7 +16,7 @@ cd into the folder RPiZeroSLM and run installation
 
 	sudo bash ./install.sh
 
-#Useful Information
+# Useful Information
 
 to start server:
 
