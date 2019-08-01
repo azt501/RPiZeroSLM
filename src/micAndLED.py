@@ -96,11 +96,11 @@ def listen(FORMAT = pyaudio.paInt16, CHUNK = 2**13, FS = 48000, CHANNEL = 1):
                     rms = numpy.sqrt(ms) # root mean squared
 		    prevdB = float("{:.2f}".format( 20*numpy.log10(rms) ))
                     text = float(prevdB) - float(dBOffset)
-		    try:
-		     	    for i in range (int(olddB), int(text), int((text-olddB)/3)):
-			        updateLEDs(i)
-		    except:
-			1+1
+#		    try:
+#		     	    for i in range (int(olddB), int(text), int((text-olddB)/3)):
+	            updateLEDs(text)
+#		    except:
+#			1+1
 		    print(text)
                     client.publish(directory,text)
                     counter, sum2 = 0,0
